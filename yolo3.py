@@ -7,8 +7,8 @@ import numpy as np
 
 
 # Load Yolo
-# Download weight file(yolov3_training_2000.weights) from this link :- https://drive.google.com/file/d/10uJEsUpQI3EmD98iwrwzbD4e19Ps-LHZ/view?usp=sharing
-net = cv2.dnn.readNet("yolov4-tiny-custom_final (1).weights", "yolov4-obj.cfg")
+# Download weight file(yolov3_training_2000.weights) from this liwnk :- https://drive.google.com/file/d/10uJEsUpQI3EmD98iwrwzbD4e19Ps-LHZ/view?usp=sharing
+net = cv2.dnn.readNet("yolov3-tiny_obj_final.weights", "yolov3-tiny_obj.cfg")
 classes = ["tidak_Lengkap", "lengkap"]
 # with open("coco.names", "r") as f:
 #     classes = [line.strip() for line in f.readlines()]
@@ -32,7 +32,8 @@ colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # for video capture
 #cap = cv2.VideoCapture(value())
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(1)
+
 # val = cv2.VideoCapture()
 while True:
     _, img = cap.read()
@@ -41,7 +42,7 @@ while True:
     # height = 512
 
     # Detecting objects
-    blob = cv2.dnn.blobFromImage(img, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+    blob = cv2.dnn.blobFromImage(img, 0.00392, (288, 288), (0, 0, 0), True, crop=False)
 
     net.setInput(blob)
     outs = net.forward(output_layers)
@@ -55,7 +56,7 @@ while True:
             scores = detection[5:]
             class_id = np.argmax(scores)
             confidence = scores[class_id]
-            if confidence > 0.8:
+            if confidence > 0.9:
                 # Object detected
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
@@ -80,7 +81,8 @@ while True:
             label = str(classes[class_ids[i]])
             color = colors[class_ids[i]]
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-            cv2.putText(img, label, (x, y + 30), font, 3, color, 3)
+            text = "{}: {:.4f}".format(label, confidences[i])
+            cv2.putText(img, text, (x, y + 30), font, 3, color, 3)
             if label == 'tidak_Lengkap':
               # doorAutomate(0)
                print('tidak lengkap')
